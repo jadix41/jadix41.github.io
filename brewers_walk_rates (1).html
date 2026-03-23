@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brewers Walk Rates: Contreras vs. Not Contreras</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #f5f3ef;
+    --surface: #fff;
+    --surface2: #edeae4;
+    --border: #d4cfc6;
+    --contreras: #b8942a;
+    --not-contreras: #2d6a96;
+    --positive: #c0392b;
+    --negative: #27ae60;
+    --text: #1a1a1a;
+    --muted: #888;
+    --accent: #b8942a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    min-height: 100vh;
+    padding: 40px 32px;
+  }
+
+  header {
+    margin-bottom: 36px;
+    border-left: 4px solid var(--accent);
+    padding-left: 20px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(26px, 4vw, 50px);
+    letter-spacing: 2px;
+    line-height: 1;
+    color: #111;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .controls {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .tab {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 7px 18px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .tab:hover { border-color: var(--accent); color: var(--accent); }
+  .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .sort-label {
+    font-size: 10px;
+    color: var(--muted);
+    margin-left: 14px;
+    letter-spacing: 1px;
+  }
+
+  .sort-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 5px 12px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+
+  .sort-btn:hover { border-color: #aaa; color: var(--text); }
+  .sort-btn.active { border-color: var(--text); color: var(--text); background: var(--surface2); }
+
+  .legend {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    width: fit-content;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .legend-swatch { width: 22px; height: 3px; }
+
+  .stats-bar {
+    display: flex;
+    gap: 28px;
+    margin-bottom: 28px;
+    padding: 14px 20px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .stat { display: flex; flex-direction: column; gap: 4px; }
+
+  .stat-label {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .stat-value {
+    font-size: 22px;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1px;
+  }
+
+  .stat-value.pos  { color: var(--positive); }
+  .stat-value.neg  { color: var(--negative); }
+  .stat-value.neu  { color: var(--accent); }
+  .stat-value.blue { color: var(--not-contreras); }
+
+  .chart-container { width: 100%; overflow-x: auto; }
+  .chart { min-width: 820px; position: relative; }
+
+  .axis {
+    display: grid;
+    grid-template-columns: 155px 1fr 68px 70px;
+    gap: 12px;
+    margin-bottom: 6px;
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid var(--border);
+    position: relative;
+    z-index: 2;
+  }
+
+  .axis-marks { position: relative; height: 18px; }
+
+  .axis-mark {
+    position: absolute;
+    font-size: 9px;
+    color: var(--muted);
+    transform: translateX(-50%);
+    letter-spacing: 0.3px;
+  }
+
+  .grid-line {
+    position: absolute;
+    top: 24px;
+    width: 1px;
+    background: #ddd;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .section-header {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 17px;
+    letter-spacing: 3px;
+    color: #fff;
+    background: #222;
+    margin: 20px 0 8px;
+    padding: 5px 14px;
+    display: inline-block;
+  }
+
+  .pitcher-row {
+    display: grid;
+    grid-template-columns: 155px 1fr 68px 70px;
+    align-items: center;
+    gap: 12px;
+    padding: 5px 0;
+    border-bottom: 1px solid #e8e4dc;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    animation: fadeUp 0.22s forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(3px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .pitcher-name {
+    font-size: 11px;
+    color: var(--text);
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bars-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    height: 34px;
+  }
+
+  .bar-track {
+    display: flex;
+    align-items: center;
+    height: 11px;
+    gap: 6px;
+  }
+
+  .bar {
+    height: 100%;
+    min-width: 2px;
+    transition: width 0.45s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .bar-contreras { background: var(--contreras); }
+  .bar-not       { background: var(--not-contreras); }
+
+  .bar-val {
+    font-size: 9px;
+    color: var(--muted);
+    white-space: nowrap;
+    min-width: 30px;
+  }
+
+  .sample-sizes {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 62px;
+    text-align: right;
+  }
+
+  .sample-val {
+    font-size: 9px;
+    color: #bbb;
+    letter-spacing: 0.3px;
+    height: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .diff-cell {
+    font-size: 12px;
+    font-weight: 600;
+    text-align: right;
+    letter-spacing: 0.3px;
+  }
+
+  .diff-pos  { color: var(--positive); }
+  .diff-neg  { color: var(--negative); }
+  .diff-zero { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>BREWERS WALK RATES<br><span>CONTRERAS VS. NOT CONTRERAS</span></h1>
+  <div class="subtitle">BB% splits by catcher · 2024 & 2025 · min 50 IP · min 30 PA w/ Contreras · min 20 PA w/o</div>
+</header>
+
+<div class="controls">
+  <button class="tab active" onclick="setYear('both',this)">Both Years</button>
+  <button class="tab" onclick="setYear('2024',this)">2024</button>
+  <button class="tab" onclick="setYear('2025',this)">2025</button>
+  <span class="sort-label">SORT:</span>
+  <button class="sort-btn active" onclick="setSort('diff',this)">By Diff</button>
+  <button class="sort-btn" onclick="setSort('name',this)">By Name</button>
+  <button class="sort-btn" onclick="setSort('contreras',this)">By Contreras BB%</button>
+</div>
+
+<div class="legend">
+  <div class="legend-item">
+    <div class="legend-swatch" style="background:var(--contreras)"></div>
+    W. Contreras
+  </div>
+  <div class="legend-item">
+    <div class="legend-swatch" style="background:var(--not-contreras)"></div>
+    Not Contreras
+  </div>
+  <div class="legend-item" style="gap:5px">
+    <span style="color:var(--positive);font-weight:600;font-size:12px">+</span>
+    <span style="color:var(--muted)">/</span>
+    <span style="color:var(--negative);font-weight:600;font-size:12px">−</span>
+    <span>Diff = Not − Contreras</span>
+  </div>
+</div>
+
+<div id="stats-bar" class="stats-bar"></div>
+
+<div class="chart-container">
+  <div class="chart" id="chart"></div>
+</div>
+
+<script>
+const data = [
+  { name:"Civale, A.",      year:2024, c:6.9,  nc:11.2, paC:232, paNC:89  },
+  { name:"Montas, F.",      year:2024, c:8.9,  nc:13.1, paC:203, paNC:61  },
+  { name:"Koenig, J.",      year:2024, c:6.2,  nc:9.8,  paC:194, paNC:82  },
+  { name:"Wilson, B.",      year:2024, c:5.6,  nc:8.9,  paC:287, paNC:168 },
+  { name:"Ross, J.",        year:2024, c:8.5,  nc:8.8,  paC:234, paNC:113 },
+  { name:"Peralta, F.",     year:2024, c:9.4,  nc:9.6,  paC:629, paNC:136 },
+  { name:"Rea, C.",         year:2024, c:6.1,  nc:5.6,  paC:593, paNC:144 },
+  { name:"Milner, H.",      year:2024, c:4.8,  nc:3.5,  paC:187, paNC:85  },
+  { name:"Myers, T.",       year:2024, c:6.5,  nc:5.0,  paC:399, paNC:201 },
+  { name:"Payamps, J.",     year:2024, c:6.8,  nc:4.9,  paC:191, paNC:61  },
+  { name:"Ashby, A.",       year:2025, c:8.7,  nc:14.8, paC:252, paNC:54  },
+  { name:"Woodruff, B.",    year:2025, c:4.2,  nc:9.1,  paC:191, paNC:66  },
+  { name:"Misiorowski, J.", year:2025, c:9.5,  nc:13.3, paC:243, paNC:75  },
+  { name:"Priester, Q.",    year:2025, c:7.5,  nc:10.8, paC:574, paNC:102 },
+  { name:"Patrick, C.",     year:2025, c:6.4,  nc:9.6,  paC:359, paNC:177 },
+  { name:"Uribe, A.",       year:2025, c:8.4,  nc:9.5,  paC:261, paNC:63  },
+  { name:"Megill, T.",      year:2025, c:7.1,  nc:7.9,  paC:170, paNC:38  },
+  { name:"Peralta, F.",     year:2025, c:9.1,  nc:9.9,  paC:646, paNC:121 },
+  { name:"Mears, N.",       year:2025, c:6.2,  nc:5.3,  paC:193, paNC:38  },
+  { name:"Quintana, J.",    year:2025, c:9.1,  nc:8.2,  paC:472, paNC:110 },
+  { name:"Anderson, G.",    year:2025, c:9.6,  nc:5.2,  paC:229, paNC:77  },
+];
+
+let currentYear = 'both';
+let currentSort = 'diff';
+
+function setYear(y, btn) {
+  currentYear = y;
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function setSort(s, btn) {
+  currentSort = s;
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function getFiltered() {
+  if (currentYear === 'both') return data;
+  return data.filter(p => p.year == currentYear);
+}
+
+function getSorted(d) {
+  const s = [...d];
+  if (currentSort === 'diff')      s.sort((a,b) => (b.nc-b.c) - (a.nc-a.c));
+  if (currentSort === 'name')      s.sort((a,b) => a.name.localeCompare(b.name));
+  if (currentSort === 'contreras') s.sort((a,b) => a.c - b.c);
+  return s;
+}
+
+function render() {
+  const filtered = getFiltered();
+  const sorted   = getSorted(filtered);
+  const maxBB    = Math.ceil(Math.max(...filtered.map(p => Math.max(p.c, p.nc))) / 5) * 5 + 2;
+
+  // Stats bar
+  const avgC    = filtered.reduce((s,p) => s+p.c,  0) / filtered.length;
+  const avgNC   = filtered.reduce((s,p) => s+p.nc, 0) / filtered.length;
+  const avgDiff = avgNC - avgC;
+  const nPos    = filtered.filter(p => (p.nc-p.c) >  1).length;
+  const nNeg    = filtered.filter(p => (p.nc-p.c) < -1).length;
+
+  document.getElementById('stats-bar').innerHTML = `
+    <div class="stat"><div class="stat-label">Avg BB% · Contreras</div><div class="stat-value neu">${avgC.toFixed(1)}%</div></div>
+    <div class="stat"><div class="stat-label">Avg BB% · Not Contreras</div><div class="stat-value blue">${avgNC.toFixed(1)}%</div></div>
+    <div class="stat"><div class="stat-label">Avg Difference</div><div class="stat-value ${avgDiff>0?'pos':'neg'}">${avgDiff>0?'+':''}${avgDiff.toFixed(1)}%</div></div>
+    <div class="stat"><div class="stat-label">Hurt w/o Contreras</div><div class="stat-value pos">${nPos}</div></div>
+    <div class="stat"><div class="stat-label">Better w/o Contreras</div><div class="stat-value neg">${nNeg}</div></div>
+    <div class="stat"><div class="stat-label">Pitcher-Seasons</div><div class="stat-value neu">${filtered.length}</div></div>
+  `;
+
+  // Axis
+  const marks = [];
+  for (let m = 0; m <= maxBB; m += 5) marks.push(m);
+
+  // Calculate height for grid lines (rows * ~45px approx)
+  const rowH = 44;
+  const years = currentYear === 'both' ? [2024,2025] : [parseInt(currentYear)];
+  const totalRows = currentYear === 'both'
+    ? data.filter(p=>p.year===2024).length + data.filter(p=>p.year===2025).length
+    : filtered.length;
+  const gridH = totalRows * rowH + 120;
+
+  const axisHTML = `
+    <div class="axis">
+      <div></div>
+      <div class="axis-marks" style="position:relative">
+        ${marks.map(m => `<div class="axis-mark" style="left:${(m/maxBB)*100}%">${m}%</div>`).join('')}
+        ${marks.map(m => `<div class="grid-line" style="left:calc(155px + 12px + ${(m/maxBB)*100}% * (100% - 155px - 68px - 24px) / 100); height:${gridH}px"></div>`).join('')}
+      </div>
+      <div style="font-size:9px;color:var(--muted);text-align:right;padding-top:2px;letter-spacing:.5px">DIFF</div>
+      <div style="font-size:9px;color:var(--muted);text-align:right;padding-top:2px;letter-spacing:.5px">PA</div>
+    </div>
+  `;
+
+  let html = axisHTML;
+
+  years.forEach(yr => {
+    const yearData = currentYear === 'both'
+      ? getSorted(data.filter(p => p.year === yr))
+      : sorted;
+
+    if (!yearData.length) return;
+
+    if (currentYear === 'both') {
+      html += `<div class="section-header">${yr}</div>`;
+    }
+
+    yearData.forEach((p, i) => {
+      const diff      = p.nc - p.c;
+      const diffClass = diff > 0.5 ? 'diff-pos' : diff < -0.5 ? 'diff-neg' : 'diff-zero';
+      const diffStr   = diff > 0 ? `+${diff.toFixed(1)}` : diff.toFixed(1);
+
+      html += `
+        <div class="pitcher-row" style="animation-delay:${i*0.022}s">
+          <div class="pitcher-name">${p.name}</div>
+          <div class="bars-wrapper">
+            <div class="bar-track">
+              <div class="bar bar-contreras" style="width:${(p.c/maxBB)*100}%"></div>
+              <div class="bar-val">${p.c.toFixed(1)}%</div>
+            </div>
+            <div class="bar-track">
+              <div class="bar bar-not" style="width:${(p.nc/maxBB)*100}%"></div>
+              <div class="bar-val">${p.nc.toFixed(1)}%</div>
+            </div>
+          </div>
+          <div class="diff-cell ${diffClass}">${diffStr}%</div>
+          <div class="sample-sizes">
+            <div class="sample-val" style="color:var(--contreras);opacity:0.8">${p.paC}</div>
+            <div class="sample-val" style="color:var(--not-contreras);opacity:0.8">${p.paNC}</div>
+          </div>
+        </div>
+      `;
+    });
+  });
+
+  document.getElementById('chart').innerHTML = html;
+}
+
+render();
+</script>
+</body>
+</html>
