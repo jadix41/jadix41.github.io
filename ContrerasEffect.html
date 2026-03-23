@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Contreras Effect — Brewers Catcher Research</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --bg: #f8f6f2;
+    --surface: #ffffff;
+    --border: #e0dbd0;
+    --navy: #0a2240;
+    --gold: #c49a22;
+    --gold-light: #faf3dc;
+    --blue-bar: #1a4a7a;
+    --positive: #b83232;
+    --negative: #2e7d32;
+    --text: #1c1c1c;
+    --muted: #888;
+    --max-w: 800px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', serif;
+    padding: 0 20px 80px;
+  }
+
+  /* ─── HEADER ─── */
+  .site-header {
+    background: var(--navy);
+    margin: 0 -20px;
+    padding: 14px 32px;
+  }
+
+  .site-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  /* ─── HERO ─── */
+  .page-hero {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 48px 0 36px;
+    border-bottom: 3px solid var(--navy);
+  }
+
+  .kicker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(44px, 7vw, 78px);
+    letter-spacing: 1px;
+    line-height: 0.92;
+    color: var(--navy);
+    margin-bottom: 20px;
+  }
+
+  h1 em { color: var(--gold); font-style: normal; }
+
+  .deck {
+    font-size: 17px;
+    color: #444;
+    line-height: 1.55;
+    max-width: 600px;
+    margin-bottom: 18px;
+    font-style: italic;
+  }
+
+  .meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.8px;
+  }
+
+  /* ─── CONTENT ─── */
+  .content {
+    max-width: var(--max-w);
+    margin: 0 auto;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.75;
+    color: #2a2a2a;
+    margin-bottom: 18px;
+  }
+
+  /* ─── SECTION ─── */
+  .article-section {
+    margin: 40px 0 0;
+    padding-top: 32px;
+    border-top: 2px solid var(--navy);
+  }
+
+  .section-head {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--navy);
+    margin-bottom: 16px;
+  }
+
+  /* ─── CARDS ─── */
+  .card-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 32px 0;
+  }
+
+  .card-row-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-top: 3px solid var(--navy);
+    padding: 16px 18px;
+  }
+
+  .stat-card.gold-top { border-top-color: var(--gold); }
+  .stat-card.red-top  { border-top-color: var(--positive); }
+  .stat-card.green-top { border-top-color: var(--negative); }
+
+  .card-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .card-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px;
+    line-height: 1;
+    letter-spacing: 0.5px;
+  }
+
+  .cv-navy  { color: var(--navy); }
+  .cv-gold  { color: var(--gold); }
+  .cv-red   { color: var(--positive); }
+  .cv-green { color: var(--negative); }
+  .cv-blue  { color: var(--blue-bar); }
+  .cv-muted { color: var(--muted); }
+
+  .card-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 5px;
+    line-height: 1.6;
+  }
+
+  /* ─── BAR COMPARE ─── */
+  .compare-block {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    padding: 20px 22px;
+    margin: 28px 0;
+  }
+
+  .compare-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cbar-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .cbar-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text);
+    text-align: right;
+    line-height: 1.3;
+  }
+
+  .cbar-label small {
+    display: block;
+    font-size: 8px;
+    color: var(--muted);
+    letter-spacing: 0.3px;
+    margin-top: 2px;
+  }
+
+  .bar-wrap {
+    height: 26px;
+    background: #ede9e1;
+    position: relative;
+  }
+
+  .bar-fill {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    min-width: 2px;
+  }
+
+  .bar-fill span {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  .bf-navy { background: var(--navy); }
+  .bf-gold { background: #a07c10; }
+  .bf-red  { background: var(--positive); }
+
+  .cbar-group { margin-bottom: 20px; }
+  .cbar-group:last-child { margin-bottom: 0; }
+
+  .cbar-group-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  /* ─── HIGHLIGHT ─── */
+  .highlight-box {
+    background: var(--gold-light);
+    border-left: 4px solid var(--gold);
+    padding: 14px 18px;
+    margin: 24px 0;
+    font-size: 15px;
+    line-height: 1.65;
+    color: #2a2000;
+  }
+
+  .workload-box {
+    background: var(--navy);
+    padding: 18px 22px;
+    margin: 28px 0;
+  }
+
+  .workload-box p {
+    color: #d0d8e4;
+    font-size: 15px;
+    margin-bottom: 0;
+  }
+
+  .workload-box strong {
+    color: var(--gold);
+  }
+
+  /* ─── CHART SECTION ─── */
+  .chart-section {
+    margin-top: 48px;
+    padding-top: 36px;
+    border-top: 2px solid var(--navy);
+  }
+
+  .chart-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 1.5px;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+
+  .chart-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .controls {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .tab {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .tab:hover  { border-color: var(--navy); color: var(--navy); }
+  .tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+  .legend {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .leg-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .leg-sw { width: 18px; height: 3px; }
+
+  .summary-strip {
+    display: flex;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    margin-bottom: 18px;
+    overflow: hidden;
+    flex-wrap: wrap;
+  }
+
+  .ss-item {
+    flex: 1;
+    min-width: 90px;
+    padding: 10px 14px;
+    border-right: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .ss-item:last-child { border-right: none; }
+
+  .ss-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 3px;
+  }
+
+  .ss-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.5px;
+    line-height: 1;
+  }
+
+  .chart-wrap { width: 100%; overflow-x: auto; }
+  .chart { min-width: 640px; position: relative; }
+
+  .c-axis {
+    display: grid;
+    grid-template-columns: 140px 1fr 52px 58px;
+    gap: 10px;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1.5px solid var(--border);
+  }
+
+  .c-axis-marks { position: relative; height: 16px; }
+
+  .c-axis-mark {
+    position: absolute;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: var(--muted);
+    transform: translateX(-50%);
+  }
+
+  .c-grid {
+    position: absolute;
+    top: 20px;
+    width: 1px;
+    background: #e5e0d8;
+    z-index: 0;
+  }
+
+  .c-yr-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: #fff;
+    background: var(--navy);
+    display: inline-block;
+    padding: 3px 12px;
+    margin: 12px 0 6px;
+  }
+
+  .c-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 52px 58px;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0;
+    border-bottom: 1px solid #ede9e1;
+    z-index: 1;
+    position: relative;
+    opacity: 0;
+    animation: fUp 0.2s forwards;
+  }
+
+  @keyframes fUp {
+    from { opacity:0; transform:translateY(3px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  .c-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text);
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .c-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    height: 32px;
+    justify-content: center;
+  }
+
+  .c-btrack {
+    display: flex;
+    align-items: center;
+    height: 10px;
+    gap: 5px;
+  }
+
+  .c-bar { height: 100%; min-width: 2px; transition: width 0.45s cubic-bezier(0.4,0,0.2,1); }
+  .c-bar-c  { background: var(--navy); }
+  .c-bar-nc { background: var(--blue-bar); opacity: 0.8; }
+
+  .c-bval {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: var(--muted);
+    white-space: nowrap;
+    min-width: 26px;
+  }
+
+  .c-diff {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .cdp { color: var(--positive); }
+  .cdn { color: var(--negative); }
+  .cdz { color: var(--muted); }
+
+  .c-pa {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    height: 32px;
+    justify-content: center;
+  }
+
+  .c-pa-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    height: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div class="site-tag">Brewers Research · Catcher Impact · 2024–2025</div>
+</div>
+
+<div class="content">
+
+  <div class="page-hero">
+    <div class="kicker">Walk Rate · Zone Rate · Catcher Value</div>
+    <h1>THE<br><em>CONTRERAS</em><br>EFFECT</h1>
+    <p class="deck">Two seasons of Statcast data show William Contreras suppresses walk rates across the Brewers pitching staff — and what it means that Gary Sanchez is coming back.</p>
+    <div class="meta">Baseball Savant Statcast · 2024–2025 Regular Season · Min 50 IP · Min 30 PA w/ Contreras · Min 20 PA w/o</div>
+  </div>
+
+  <!-- TOP CARDS -->
+  <div class="card-row" style="margin-top:36px">
+    <div class="stat-card gold-top">
+      <div class="card-label">Avg BB% · Contreras</div>
+      <div class="card-val cv-gold">7.5%</div>
+      <div class="card-sub">across 21 pitcher-seasons<br>2024 & 2025 combined</div>
+    </div>
+    <div class="stat-card">
+      <div class="card-label">Avg BB% · Not Contreras</div>
+      <div class="card-val cv-blue">9.7%</div>
+      <div class="card-sub">Sanchez 2024 · Haase & Jansen 2025</div>
+    </div>
+    <div class="stat-card red-top">
+      <div class="card-label">Average Difference</div>
+      <div class="card-val cv-red">+2.2%</div>
+      <div class="card-sub">higher walk rate<br>without Contreras</div>
+    </div>
+  </div>
+
+  <!-- ZONE RATE GRAPHIC -->
+  <div class="compare-block">
+    <div class="compare-title">Zone Rate — Pitches Thrown in Strike Zone</div>
+
+    <div class="cbar-group">
+      <div class="cbar-group-label">2024</div>
+      <div class="cbar-row">
+        <div class="cbar-label">Contreras<small>124 games</small></div>
+        <div class="bar-wrap"><div class="bar-fill bf-navy" style="width:50.3%"><span>50.3%</span></div></div>
+      </div>
+      <div class="cbar-row">
+        <div class="cbar-label">Sanchez<small>31 games</small></div>
+        <div class="bar-wrap"><div class="bar-fill bf-gold" style="width:44.1%"><span>44.1%</span></div></div>
+      </div>
+    </div>
+
+    <div class="cbar-group">
+      <div class="cbar-group-label">2025</div>
+      <div class="cbar-row">
+        <div class="cbar-label">Contreras<small>128 games</small></div>
+        <div class="bar-wrap"><div class="bar-fill bf-navy" style="width:51.1%"><span>51.1%</span></div></div>
+      </div>
+      <div class="cbar-row">
+        <div class="cbar-label">Haase / Jansen<small>49 games</small></div>
+        <div class="bar-wrap"><div class="bar-fill bf-gold" style="width:48.2%"><span>48.2%</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="article-section">
+    <div class="section-head">Zone Rate Is the Mechanism</div>
+    <p>The edge framing numbers between Contreras and his backups are essentially the same across both seasons, so framing isn't driving the walk rate gap.</p>
+    <p>Brewers pitchers throw to the strike zone at a meaningfully higher rate when Contreras is behind the plate. A 6.2-point zone rate gap in 2024 and a 2.9-point gap in 2025 means pitchers are actively attacking hitters more with Contreras catching.</p>
+    <p>Whether that's pitch-calling, trust, or something harder to quantify, the behavioral change shows up consistently across different pitchers and different seasons.</p>
+  </div>
+
+  <!-- WORKLOAD BOX -->
+  <div class="workload-box">
+    <p><strong>Ever wonder how Contreras started 128 games behind the plate in 2025, a career high, while playing through a fractured left hand for most of the season?</strong> The Brewers knew what the data shows. Every game he missed meant a backup catching a staff that walks batters at a measurably higher rate without him. He caught as many games as he physically could because the organization understood the cost when he didn't.</p>
+  </div>
+
+  <div class="article-section">
+    <div class="section-head">From Sanchez to Jansen, and Back Again</div>
+    <p>Gary Sanchez caught 31 games in 2024 with 1,113 plate appearances behind him. The staff walked batters at an 8.3% rate in those games, compared to 7.4% with Contreras. Zone rate dropped 6.2 points.</p>
+    <p>The Brewers replaced him with Eric Haase to open 2025, then added Danny Jansen at the trade deadline in August. Jansen's reputation as one of the better defensive catchers in the league made him a logical target when the backup situation wasn't working.</p>
+    <p>Now Sanchez is back for 2026, and the signing is defensible. He hits left-handed pitching better than almost any backup catcher available, which addresses a real lineup gap. The Brewers aren't signing him to replace Contreras. They're signing him to fill the DH slot against southpaws and spot-catch when Contreras needs a day.</p>
+    <p>The question is whether the staff can absorb the receiving tradeoff on those days. This data suggests some pitchers handle it better than others.</p>
+
+    <!-- SANCHEZ 2024 GRAPHIC -->
+    <div class="compare-block" style="margin-top:24px">
+      <div class="compare-title">Sanchez 2024 — Staff Splits</div>
+      <div class="card-row">
+        <div class="stat-card">
+          <div class="card-label">Games Caught</div>
+          <div class="card-val cv-navy">31</div>
+          <div class="card-sub">Gary Sanchez · 2024<br>1,113 plate appearances</div>
+        </div>
+        <div class="stat-card red-top">
+          <div class="card-label">Staff BB% w/ Sanchez</div>
+          <div class="card-val cv-red">8.3%</div>
+          <div class="card-sub">vs. 7.4% with Contreras</div>
+        </div>
+        <div class="stat-card red-top">
+          <div class="card-label">Zone Rate Drop</div>
+          <div class="card-val cv-red">−6.2%</div>
+          <div class="card-sub">50.3% → 44.1%<br>pitchers attacking less</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WILSON / 2026 CONCERN SECTION -->
+  <div class="article-section">
+    <div class="section-head">The Wilson Problem, and Who Inherits It</div>
+    <p>Bryse Wilson is the clearest illustration of what catcher-sensitive command actually looks like. With Contreras in 2024, he posted a 5.6% walk rate and attacked the zone 55.7% of the time, functioning as a contact-oriented starter. Without Contreras, his zone rate fell nearly 10 points to 45.8% and his walk rate jumped to 8.9%. Same pitcher, radically different output depending on who was catching.</p>
+
+    <div class="compare-block">
+      <div class="compare-title">Wilson 2024 — The Sharpest Split in the Dataset</div>
+      <div class="card-row">
+        <div class="stat-card gold-top">
+          <div class="card-label">BB% · Contreras</div>
+          <div class="card-val cv-gold">5.6%</div>
+          <div class="card-sub">Zone rate: 55.7%<br>287 PA</div>
+        </div>
+        <div class="stat-card red-top">
+          <div class="card-label">BB% · Not Contreras</div>
+          <div class="card-val cv-red">8.9%</div>
+          <div class="card-sub">Zone rate: 45.8%<br>168 PA</div>
+        </div>
+        <div class="stat-card red-top">
+          <div class="card-label">Walk Rate Difference</div>
+          <div class="card-val cv-red">+3.3%</div>
+          <div class="card-sub">Zone rate dropped<br>9.9 points without Contreras</div>
+        </div>
+      </div>
+    </div>
+
+    <p>Wilson isn't on the 2026 roster, but his profile has clear successors. Chad Patrick posted a 7.1-point zone rate drop with backup catchers in 2025 and a 3.2% walk rate increase, the most Wilson-like numbers on the current staff. Aaron Ashby's zone rate dropped 7.0 points and his walk rate jumped 6.1 points without Contreras.</p>
+
+    <p>These aren't peripheral arms. Patrick made 23 starts as a rookie, logged 119.2 innings, and threw nine postseason frames with 11 strikeouts, including a starring role in the Game 5 win over the Cubs that sent Milwaukee to the NLCS.</p>
+
+    <p>Ashby made 43 appearances in 2025, averaged a career-high 97.5 mph on his sinker, and was trusted as the opener in both the NLDS and NLCS. The Brewers leaned on both of them all season and even harder when it mattered most.</p>
+
+    <p>They are core pieces, not depth options, and both show meaningful catcher sensitivity in the data.</p>
+
+    <div class="compare-block">
+      <div class="compare-title">Patrick & Ashby 2025 — Most Catcher-Sensitive on Current Roster</div>
+      <div class="cbar-group">
+        <div class="cbar-group-label">Chad Patrick — Zone Rate</div>
+        <div class="cbar-row">
+          <div class="cbar-label">Contreras<small>359 PA</small></div>
+          <div class="bar-wrap"><div class="bar-fill bf-navy" style="width:52.7%"><span>52.7% · BB% 6.4%</span></div></div>
+        </div>
+        <div class="cbar-row">
+          <div class="cbar-label">Not Contreras<small>177 PA</small></div>
+          <div class="bar-wrap"><div class="bar-fill bf-gold" style="width:45.6%"><span>45.6% · BB% 9.6%</span></div></div>
+        </div>
+      </div>
+      <div class="cbar-group">
+        <div class="cbar-group-label">Aaron Ashby — Zone Rate</div>
+        <div class="cbar-row">
+          <div class="cbar-label">Contreras<small>252 PA</small></div>
+          <div class="bar-wrap"><div class="bar-fill bf-navy" style="width:51.5%"><span>51.5% · BB% 8.7%</span></div></div>
+        </div>
+        <div class="cbar-row">
+          <div class="cbar-label">Not Contreras<small>54 PA</small></div>
+          <div class="bar-wrap"><div class="bar-fill bf-gold" style="width:44.5%"><span>44.5% · BB% 14.8%</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <p>These are the pitchers to watch when Sanchez is catching in 2026. The splits with Contreras show what they're capable of. The splits without him show the range of outcomes when he's not there.</p>
+  </div>
+
+  <div class="article-section">
+    <div class="section-head">2026 and the Sanchez Re-Sign</div>
+    <p>The Brewers re-signed Gary Sanchez as backup for 2026. His bat against left-handed pitching addresses a real lineup need, and the expectation is that Contreras catches the bulk of games regardless.</p>
+    <p>This data isn't an argument against the signing. It's a map of which days carry the most risk. Patrick, Ashby, and Priester are productive pitchers with Contreras behind the plate. Each has shown they walk more and attack the zone less without him.</p>
+    <p>On the days Sanchez catches, those are the starts most likely to get expensive early.</p>
+  </div>
+
+  <!-- CHART -->
+  <div class="chart-section">
+    <div class="chart-title">BB% SPLITS — ALL QUALIFIED PITCHERS</div>
+    <div class="chart-sub">Min 50 IP · Min 30 PA w/ Contreras · Min 20 PA w/o · Sorted by walk rate difference</div>
+
+    <div class="controls">
+      <button class="tab active" onclick="setYear('both',this)">Both Years</button>
+      <button class="tab" onclick="setYear('2024',this)">2024</button>
+      <button class="tab" onclick="setYear('2025',this)">2025</button>
+    </div>
+
+    <div class="legend">
+      <div class="leg-item"><div class="leg-sw" style="background:var(--navy)"></div>W. Contreras</div>
+      <div class="leg-item"><div class="leg-sw" style="background:var(--blue-bar);opacity:.8"></div>Not Contreras</div>
+      <div class="leg-item" style="color:var(--muted)">
+        <span style="color:var(--positive);font-weight:700">+</span>&nbsp;/&nbsp;<span style="color:var(--negative);font-weight:700">−</span>&nbsp;Diff = Not − Contreras
+      </div>
+    </div>
+
+    <div id="sstrip" class="summary-strip"></div>
+    <div class="chart-wrap"><div class="chart" id="chart"></div></div>
+  </div>
+
+</div><!-- /content -->
+
+
+
+<script>
+const data = [
+  { name:"Civale, A.",      year:2024, c:6.9,  nc:11.2, paC:232, paNC:89  },
+  { name:"Montas, F.",      year:2024, c:8.9,  nc:13.1, paC:203, paNC:61  },
+  { name:"Koenig, J.",      year:2024, c:6.2,  nc:9.8,  paC:194, paNC:82  },
+  { name:"Wilson, B.",      year:2024, c:5.6,  nc:8.9,  paC:287, paNC:168 },
+  { name:"Ross, J.",        year:2024, c:8.5,  nc:8.8,  paC:234, paNC:113 },
+  { name:"Peralta, F.",    year:2024, c:9.4,  nc:9.6,  paC:629, paNC:136 },
+  { name:"Rea, C.",         year:2024, c:6.1,  nc:5.6,  paC:593, paNC:144 },
+  { name:"Milner, H.",      year:2024, c:4.8,  nc:3.5,  paC:187, paNC:85  },
+  { name:"Myers, T.",       year:2024, c:6.5,  nc:5.0,  paC:399, paNC:201 },
+  { name:"Payamps, J.",     year:2024, c:6.8,  nc:4.9,  paC:191, paNC:61  },
+  { name:"Ashby, A.",       year:2025, c:8.7,  nc:14.8, paC:252, paNC:54  },
+  { name:"Woodruff, B.",    year:2025, c:4.2,  nc:9.1,  paC:191, paNC:66  },
+  { name:"Misiorowski, J.", year:2025, c:9.5,  nc:13.3, paC:243, paNC:75  },
+  { name:"Priester, Q.",    year:2025, c:7.5,  nc:10.8, paC:574, paNC:102 },
+  { name:"Patrick, C.",     year:2025, c:6.4,  nc:9.6,  paC:359, paNC:177 },
+  { name:"Uribe, A.",       year:2025, c:8.4,  nc:9.5,  paC:261, paNC:63  },
+  { name:"Megill, T.",      year:2025, c:7.1,  nc:7.9,  paC:170, paNC:38  },
+  { name:"Peralta, F.",    year:2025, c:9.1,  nc:9.9,  paC:646, paNC:121 },
+  { name:"Mears, N.",       year:2025, c:6.2,  nc:5.3,  paC:193, paNC:38  },
+  { name:"Quintana, J.",    year:2025, c:9.1,  nc:8.2,  paC:472, paNC:110 },
+  { name:"Anderson, G.",    year:2025, c:9.6,  nc:5.2,  paC:229, paNC:77  },
+];
+
+let currentYear = 'both';
+
+function setYear(y, btn) {
+  currentYear = y;
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function render() {
+  const filtered = currentYear === 'both' ? data : data.filter(p => p.year == currentYear);
+  const maxBB = Math.ceil(Math.max(...filtered.map(p => Math.max(p.c, p.nc))) / 5) * 5 + 2;
+
+  const avgC    = filtered.reduce((s,p) => s+p.c,  0) / filtered.length;
+  const avgNC   = filtered.reduce((s,p) => s+p.nc, 0) / filtered.length;
+  const avgDiff = avgNC - avgC;
+  const nPos    = filtered.filter(p => (p.nc-p.c) >  1).length;
+  const nNeg    = filtered.filter(p => (p.nc-p.c) < -1).length;
+
+  document.getElementById('sstrip').innerHTML = `
+    <div class="ss-item"><div class="ss-label">Avg BB% · Contreras</div><div class="ss-val" style="color:var(--navy)">${avgC.toFixed(1)}%</div></div>
+    <div class="ss-item"><div class="ss-label">Avg BB% · Not Contreras</div><div class="ss-val" style="color:var(--blue-bar)">${avgNC.toFixed(1)}%</div></div>
+    <div class="ss-item"><div class="ss-label">Avg Diff</div><div class="ss-val" style="color:${avgDiff>0?'var(--positive)':'var(--negative)'}">${avgDiff>0?'+':''}${avgDiff.toFixed(1)}%</div></div>
+    <div class="ss-item"><div class="ss-label">Hurt w/o Contreras</div><div class="ss-val" style="color:var(--positive)">${nPos}</div></div>
+    <div class="ss-item"><div class="ss-label">Better w/o</div><div class="ss-val" style="color:var(--negative)">${nNeg}</div></div>
+    <div class="ss-item"><div class="ss-label">Pitcher-Seasons</div><div class="ss-val" style="color:var(--navy)">${filtered.length}</div></div>
+  `;
+
+  const marks = [];
+  for (let m = 0; m <= maxBB; m += 5) marks.push(m);
+  const gridH = filtered.length * 46 + 100;
+
+  let html = `
+    <div class="c-axis">
+      <div></div>
+      <div class="c-axis-marks">
+        ${marks.map(m => `
+          <div class="c-axis-mark" style="left:${(m/maxBB)*100}%">${m}%</div>
+          <div class="c-grid" style="left:${(m/maxBB)*100}%;height:${gridH}px"></div>
+        `).join('')}
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);text-align:right;padding-top:2px">DIFF</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);text-align:right;padding-top:2px">PA</div>
+    </div>
+  `;
+
+  const years = currentYear === 'both' ? [2024,2025] : [parseInt(currentYear)];
+
+  years.forEach(yr => {
+    const yd = currentYear === 'both'
+      ? [...data.filter(p=>p.year===yr)].sort((a,b)=>(b.nc-b.c)-(a.nc-a.c))
+      : [...filtered].sort((a,b)=>(b.nc-b.c)-(a.nc-a.c));
+
+    if (!yd.length) return;
+    if (currentYear === 'both') html += `<div class="c-yr-label">${yr}</div>`;
+
+    yd.forEach((p,i) => {
+      const diff = p.nc - p.c;
+      const dc   = diff > 0.5 ? 'cdp' : diff < -0.5 ? 'cdn' : 'cdz';
+      const ds   = diff > 0 ? `+${diff.toFixed(1)}` : diff.toFixed(1);
+      html += `
+        <div class="c-row" style="animation-delay:${i*0.02}s">
+          <div class="c-name">${p.name}</div>
+          <div class="c-bars">
+            <div class="c-btrack">
+              <div class="c-bar c-bar-c" style="width:${(p.c/maxBB)*100}%"></div>
+              <div class="c-bval">${p.c.toFixed(1)}%</div>
+            </div>
+            <div class="c-btrack">
+              <div class="c-bar c-bar-nc" style="width:${(p.nc/maxBB)*100}%"></div>
+              <div class="c-bval">${p.nc.toFixed(1)}%</div>
+            </div>
+          </div>
+          <div class="c-diff ${dc}">${ds}%</div>
+          <div class="c-pa">
+            <div class="c-pa-val" style="color:var(--navy)">${p.paC}</div>
+            <div class="c-pa-val" style="color:var(--blue-bar)">${p.paNC}</div>
+          </div>
+        </div>
+      `;
+    });
+  });
+
+  document.getElementById('chart').innerHTML = html;
+}
+
+render();
+</script>
+</body>
+</html>
